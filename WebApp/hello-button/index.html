@@ -1,78 +1,283 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>안녕 버튼</title>
-  <style>
-    body {
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      background: linear-gradient(135deg, #a18cd1, #fbc2eb, #fad0c4);
-      font-family: sans-serif;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>손인사 카드</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #eef1ee;
+    --bg-soft: #ffffff;
+    --ink: #1e2a24;
+    --ink-soft: #52625a;
+    --accent: #e8603c;
+    --accent-2: #2f8f6e;
+    --gold: #e2a83a;
+    --card-border: #d8ddd3;
+    --shadow: rgba(30, 42, 36, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12201a;
+      --bg-soft: #182920;
+      --ink: #eef1ea;
+      --ink-soft: #a9bcb0;
+      --accent: #ff8763;
+      --accent-2: #5fd6a7;
+      --gold: #f0c264;
+      --card-border: #24392e;
+      --shadow: rgba(0, 0, 0, 0.35);
     }
-    #emoji {
-      font-size: 80px;
-      transition: transform 0.3s ease;
-    }
-    #greeting {
-      font-size: 52px;
-      font-weight: bold;
-      background: linear-gradient(90deg, #ff5f6d, #ffc371);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      transition: background 0.3s ease;
-    }
-    #toggle-btn {
-      font-size: 20px;
-      padding: 12px 28px;
-      border: none;
-      border-radius: 24px;
-      background: linear-gradient(90deg, #43cea2, #185a9d);
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    #toggle-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-    }
-  </style>
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #12201a;
+    --bg-soft: #182920;
+    --ink: #eef1ea;
+    --ink-soft: #a9bcb0;
+    --accent: #ff8763;
+    --accent-2: #5fd6a7;
+    --gold: #f0c264;
+    --card-border: #24392e;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 32px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas#burst {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .card {
+    position: relative;
+    width: min(380px, 100%);
+    background: var(--bg-soft);
+    border: 1px solid var(--card-border);
+    border-radius: 28px;
+    padding: 56px 32px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 24px 48px -20px var(--shadow);
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  .stage {
+    width: 108px;
+    height: 108px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    transform-origin: 70% 70%;
+    filter: drop-shadow(0 8px 16px var(--shadow));
+  }
+
+  @keyframes wave-hi {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-18deg); }
+    40% { transform: rotate(14deg); }
+    60% { transform: rotate(-10deg); }
+    80% { transform: rotate(6deg); }
+  }
+
+  .stage.waving { animation: wave-hi 0.6s ease; }
+
+  h1 {
+    margin: 0;
+    font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: clamp(40px, 9vw, 56px);
+    line-height: 1;
+    color: var(--accent);
+    text-wrap: balance;
+    transition: color 0.35s ease;
+  }
+
+  p.sub {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+    text-align: center;
+    max-width: 26ch;
+  }
+
+  button#toggle-btn {
+    margin-top: 8px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 13px 30px;
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--accent-2);
+    cursor: pointer;
+    box-shadow: 0 10px 20px -8px var(--shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.35s ease;
+  }
+
+  button#toggle-btn:hover { transform: translateY(-2px); }
+  button#toggle-btn:active { transform: translateY(0); }
+  button#toggle-btn:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .dots {
+    display: flex;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--card-border);
+    transition: background 0.35s ease, transform 0.35s ease;
+  }
+  .dots span.active {
+    background: var(--gold);
+    transform: scale(1.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage.waving { animation: none; }
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
 </head>
 <body>
-  <div id="emoji">👋</div>
-  <div id="greeting">안녕</div>
-  <button id="toggle-btn" onclick="toggleGreeting()">클릭하세요</button>
 
-  <script>
-    const greetings = ["안녕", "반가워요!"];
-    const buttonLabels = ["클릭하세요", "다시 클릭!"];
-    const emojis = ["👋", "😄"];
-    const gradients = [
-      "linear-gradient(90deg, #ff5f6d, #ffc371)",
-      "linear-gradient(90deg, #38ef7d, #11998e)"
-    ];
-    let state = 0;
+<canvas id="burst"></canvas>
 
-    function toggleGreeting() {
-      state = 1 - state;
-      const greetingEl = document.getElementById("greeting");
-      greetingEl.textContent = greetings[state];
-      greetingEl.style.background = gradients[state];
-      greetingEl.style.webkitBackgroundClip = "text";
-      greetingEl.style.backgroundClip = "text";
-      document.getElementById("toggle-btn").textContent = buttonLabels[state];
-      const emojiEl = document.getElementById("emoji");
-      emojiEl.textContent = emojis[state];
-      emojiEl.style.transform = "scale(1.2) rotate(15deg)";
-      setTimeout(() => { emojiEl.style.transform = "scale(1) rotate(0deg)"; }, 300);
+<div class="card">
+  <div class="eyebrow">Hello Card</div>
+  <div class="stage" id="stage">👋</div>
+  <h1 id="greeting">안녕</h1>
+  <p class="sub" id="sub">눌러보면 인사가 바뀌어요</p>
+  <button id="toggle-btn" type="button">눌러보기</button>
+  <div class="dots" id="dots"></div>
+</div>
+
+<script>
+  const states = [
+    { emoji: '👋', greeting: '안녕',      sub: '눌러보면 인사가 바뀌어요', accent: '#e8603c', accentDark: '#ff8763' },
+    { emoji: '😄', greeting: '반가워요!', sub: '오늘도 좋은 하루 보내세요', accent: '#2f8f6e', accentDark: '#5fd6a7' },
+    { emoji: '🌱', greeting: '또 만나요', sub: '다음에 또 눌러주세요',     accent: '#c98a1f', accentDark: '#f0c264' },
+  ];
+
+  let index = 0;
+  const stageEl = document.getElementById('stage');
+  const greetingEl = document.getElementById('greeting');
+  const subEl = document.getElementById('sub');
+  const dotsEl = document.getElementById('dots');
+  const btn = document.getElementById('toggle-btn');
+
+  states.forEach((_, i) => {
+    const dot = document.createElement('span');
+    if (i === 0) dot.className = 'active';
+    dotsEl.appendChild(dot);
+  });
+
+  function isDark() {
+    const stamp = document.documentElement.getAttribute('data-theme');
+    if (stamp === 'dark') return true;
+    if (stamp === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function render() {
+    const s = states[index];
+    stageEl.textContent = s.emoji;
+    greetingEl.textContent = s.greeting;
+    subEl.textContent = s.sub;
+    greetingEl.style.color = isDark() ? s.accentDark : s.accent;
+    [...dotsEl.children].forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+
+  function burstConfetti(x, y) {
+    const canvas = document.getElementById('burst');
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const colors = ['#e8603c', '#2f8f6e', '#e2a83a'];
+    const particles = Array.from({ length: 22 }, () => ({
+      x, y,
+      vx: (Math.random() - 0.5) * 6,
+      vy: -Math.random() * 5 - 2,
+      size: Math.random() * 5 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1,
+    }));
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.22;
+        p.life -= 0.02;
+        if (p.life > 0) {
+          alive = true;
+          ctx.globalAlpha = Math.max(p.life, 0);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+      if (alive) requestAnimationFrame(tick);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-  </script>
+    tick();
+  }
+
+  btn.addEventListener('click', (e) => {
+    index = (index + 1) % states.length;
+    render();
+    stageEl.classList.remove('waving');
+    void stageEl.offsetWidth;
+    stageEl.classList.add('waving');
+    burstConfetti(e.clientX, e.clientY);
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+  render();
+</script>
 </body>
 </html>
