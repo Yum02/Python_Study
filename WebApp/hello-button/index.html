@@ -90,6 +90,16 @@
     text-transform: uppercase;
   }
 
+  .photo {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--bg-soft);
+    outline: 1px solid var(--card-border);
+    box-shadow: 0 12px 24px -12px var(--shadow);
+  }
+
   .stage {
     width: 108px;
     height: 108px;
@@ -181,6 +191,7 @@
 
 <div class="card">
   <div class="eyebrow">Hello Card</div>
+  <img class="photo" src="images/otter.jpg" alt="깜짝 놀라 소리치는 수달">
   <div class="stage" id="stage">👋</div>
   <h1 id="greeting">안녕</h1>
   <p class="sub" id="sub">눌러보면 인사가 바뀌어요</p>
